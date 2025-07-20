@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shopbanhang/screens/login_screen.dart';
 import 'package:shopbanhang/database/db_helper.dart';
@@ -45,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'hoten': _nameController.text.trim(),
         'email': email,
         'matkhau': _passwordController.text.trim(),
-        'role': 'khachhang',
+        'role': 'User',
         'gioitinh': _selectedGender,
         'diachi': _diaChiController.text.trim(),
         'ngaysinh': _ngaySinhController.text.trim(),
@@ -339,4 +338,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-

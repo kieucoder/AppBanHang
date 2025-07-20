@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'account.dart';
-import 'add_danhmuc.dart';
+import 'package:shopbanhang/screens/account.dart';
+import 'giohang_screen.dart';
 import 'hometab.dart';
 
 void main() {
@@ -9,6 +10,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
 
   @override
@@ -48,7 +50,11 @@ class MyApp extends StatelessWidget {
           titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
-      home: const HomeScreen(username: 'Khách'),
+      home: const HomeScreen(
+        iduser: 1, // hoặc một giá trị mặc định
+        username: 'Khách',
+      ),
+
     );
   }
 }
@@ -56,13 +62,19 @@ class MyApp extends StatelessWidget {
 
 
 class HomeScreen extends StatefulWidget {
+  final int iduser;
   final String username;
 
-  const HomeScreen({super.key, required this.username});
+  const HomeScreen({
+    super.key,
+    required this.iduser,
+    required this.username,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
@@ -71,14 +83,16 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
   }
+  int currentUserId = 1; // Hoặc lấy từ session/login
 
   // Gọi các màn hình tương ứng với từng tab
   Widget _buildBody() {
     switch (_selectedIndex) {
+
       case 0:
-        return const HomeTab(); // Trang chủ đã tách riêng
+        return HomeTab(iduser: currentUserId); // Trang chủ đã tách riêng
       case 1:
-        return const ThemDanhMucScreen();
+        return AccountScreen(username: widget.username); // ✅
       case 2:
         return const Center(child: Text('Tin tức'));
       case 3:
@@ -95,6 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    int currentUserId = 1; // Hoặc lấy từ session/login
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
@@ -123,9 +139,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             IconButton(
+
               icon: const Icon(Icons.shopping_cart),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GioHangScreen(iduser: currentUserId),
+                  ),
+                );
+              },
             ),
+
           ],
         ),
         backgroundColor: Colors.indigo,

@@ -1,39 +1,63 @@
-class Product {
-  int? id;
+class SanPham {
+  int? idsp;
   String tensp;
   String? mota;
-  String? motaChiTiet;
   double gia;
   String? hinhanh;
   String? xuatxu;
   String? khoiluong;
   String? thuonghieu;
-  int iddmsp;
+  int? iddanhmuc;
+  double giamgia;
+  int soluong;
+  String? trangthai;
 
-  Product({
-    this.id,
+  SanPham({
+    this.idsp,
     required this.tensp,
     this.mota,
-    this.motaChiTiet,
     required this.gia,
     this.hinhanh,
     this.xuatxu,
     this.khoiluong,
     this.thuonghieu,
-    required this.iddmsp,
+    this.iddanhmuc,
+    this.giamgia = 0,
+    this.soluong = 0,
+    this.trangthai = 'Hiện',
   });
 
   Map<String, dynamic> toMap() {
     return {
+      'idsp': idsp,
       'tensp': tensp,
       'mota': mota,
-      'mota_chitiet': motaChiTiet,
       'gia': gia,
       'hinhanh': hinhanh,
       'xuatxu': xuatxu,
       'khoiluong': khoiluong,
       'thuonghieu': thuonghieu,
-      'iddmsp': iddmsp,
+      'iddanhmuc': iddanhmuc,
+      'giamgia': giamgia,
+      'soluong': soluong,
+      'trangthai': trangthai,
     };
+  }
+
+  factory SanPham.fromMap(Map<String, dynamic> map) {
+    return SanPham(
+      idsp: map['idsp'],
+      tensp: map['tensp'],
+      mota: map['mota'],
+      gia: map['gia'],
+      hinhanh: map['hinhanh'],
+      xuatxu: map['xuatxu'],
+      khoiluong: map['khoiluong'],
+      thuonghieu: map['thuonghieu'],
+      iddanhmuc: map['iddanhmuc'],
+      giamgia: map['giamgia'],
+      soluong: map['soluong'],
+      trangthai: map['trangthai'],
+    );
   }
 }

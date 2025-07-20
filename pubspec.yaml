@@ -13,6 +13,8 @@ environment:
   #  flutter:
   #    sdk: flutter
 dependencies:
+  intl: ^0.18.0
+  image_picker: ^1.0.4  # chọn hình ảnh từ thiết bị
   flutter:
     sdk: flutter
   sqflite: ^2.3.2     # phiên bản mới nhất hiện tại
@@ -31,4 +33,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/hipplogo.png
+    - assets/logo-healthy-care.png
+    - assets/logoabbott.png
+    - assets/meijilogo.png
+    - assets/aptamillogo.png
+    - assets/frisologo.png
+    - assets/nestlelogo.jpg
+    - assets/Glicologo.png
 

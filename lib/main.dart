@@ -1,11 +1,18 @@
+
 import 'package:flutter/material.dart';
-import 'package:shopbanhang/screens/add_danhmuc.dart';
+import 'package:shopbanhang/database/db_helper.dart';
 
-import 'package:shopbanhang/screens/list_danhmuc.dart';
+import 'package:shopbanhang/screens/giohang_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.initDB(); // Tạo DB nếu chưa có
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: GioHangScreen(iduser: 2,),
+  ));
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,12 +20,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tiệm Sữa 4CE',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      home: const DanhSachDanhMucScreen(), // ✅ Trang thêm danh mục
+      theme: ThemeData(fontFamily: 'Tiệm sửa 3CE'),
+      home: const GioHangScreen(iduser: 2,),
     );
   }
 }

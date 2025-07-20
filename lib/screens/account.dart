@@ -5,10 +5,6 @@ import 'package:shopbanhang/main.dart';
 import '../models/user.dart';
 import 'login_screen.dart';
 
-void main(){
-  runApp(const MyApp());
-}
-
 
 class AccountScreen extends StatefulWidget {
   final String username;

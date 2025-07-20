@@ -1,27 +1,31 @@
 class DanhMuc {
-  final int? id;
-  final String tenDanhMuc;
-  final String? trangThai;
+  int? id;
+  String tendanhmuc;
+  String? trangthai;
+  String? hinhanh;
 
   DanhMuc({
     this.id,
-    required this.tenDanhMuc,
-    this.trangThai,
+    required this.tendanhmuc,
+    this.trangthai,
+    this.hinhanh,
   });
-
-  factory DanhMuc.fromMap(Map<String, dynamic> map) {
-    return DanhMuc(
-      id: map['iddanhmuc'],
-      tenDanhMuc: map['tendanhmuc'],
-      trangThai: map['trangthai'],
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
-      'iddanhmuc': id,
-      'tendanhmuc': tenDanhMuc,
-      'trangthai': trangThai,
+      'id': id,
+      'tendanhmuc': tendanhmuc,
+      'trangthai': trangthai,
+      'hinhanh': hinhanh,
     };
+  }
+
+  factory DanhMuc.fromMap(Map<String, dynamic> map) {
+    return DanhMuc(
+      id: map['id'],
+      tendanhmuc: map['tendanhmuc'],
+      trangthai: map['trangthai'],
+      hinhanh: map['hinhanh'],
+    );
   }
 }
