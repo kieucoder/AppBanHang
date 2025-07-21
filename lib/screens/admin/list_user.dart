@@ -39,7 +39,10 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Quản lý Người dùng')),
+      appBar:
+      AppBar(title: const Text('Quản lý Người dùng'),
+      centerTitle: true,),
+
       body: _users.isEmpty
           ? const Center(child: Text('Không có người dùng nào'))
           : ListView.builder(

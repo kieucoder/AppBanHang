@@ -78,6 +78,7 @@ class _ListSanPhamScreenState extends State<ListSanPhamScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quản lý sản phẩm'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

@@ -63,7 +63,6 @@ class _AccountScreenState extends State<AccountScreen> {
             Text(user!.email, style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 24),
             _buildInfoCard(" Họ tên", user!.hoten),
-
             _buildInfoCard(" Giới tính", user!.gioitinh),
             _buildInfoCard(" Ngày sinh", user!.ngaysinh),
             _buildInfoCard(" Địa chỉ", user!.diachi),
@@ -80,13 +79,14 @@ class _AccountScreenState extends State<AccountScreen> {
         child: SizedBox(
           height: 50,
           child: ElevatedButton.icon(
-            icon: const Icon(Icons.logout, color: Colors.lightBlue),
+            icon: const Icon(Icons.logout, color: Colors.white),
             label: const Text(
               'Đăng xuất',
-              style: TextStyle(fontSize: 16, color: Colors.lightBlue),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white, // nền trắng
+
+              backgroundColor: Colors.indigo, // nền trắng
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

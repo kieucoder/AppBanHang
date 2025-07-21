@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../database/db_helper.dart';
+import 'checkout_screen.dart';
 
 class GioHangScreen extends StatefulWidget {
   final int iduser; // ID của user đăng nhập
@@ -58,7 +59,7 @@ class _GioHangScreenState extends State<GioHangScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Giỏ hàng'),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.indigo,
       ),
       body: gioHang.isEmpty
           ? const Center(
@@ -137,9 +138,20 @@ class _GioHangScreenState extends State<GioHangScreen> {
             ElevatedButton(
               onPressed: () {
                 // TODO: Điều hướng đến trang thanh toán
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CheckoutScreen(
+                      iduser: widget.iduser,   // Lấy từ widget.iduser
+                      // ID phải chính xác
+                      tongTien: tongTien,
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.indigo,
                 minimumSize: const Size(double.infinity, 50),
               ),
               child: const Text(

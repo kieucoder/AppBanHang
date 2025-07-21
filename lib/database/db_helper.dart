@@ -16,7 +16,6 @@ class DBHelper {
     final path = await getDBPath();
 
 
-
     // final dbPath = await getDatabasesPath();
     // await deleteDatabase(join(dbPath, 'shopbanhang.db'));
 
@@ -115,7 +114,8 @@ class DBHelper {
         if (oldVersion < 5) {
           // Kiểm tra cột phuongthucthanhtoan
           final columns = await db.rawQuery("PRAGMA table_info(donhang)");
-          final hasColumn = columns.any((col) => col['name'] == 'phuongthucthanhtoan');
+          final hasColumn = columns.any((col) =>
+          col['name'] == 'phuongthucthanhtoan');
 
           if (!hasColumn) {
             await db.execute(
@@ -145,7 +145,6 @@ class DBHelper {
     final columns = await db.rawQuery("PRAGMA table_info(sanpham)");
     print("Columns in sanpham: $columns");
   }
-
 
 
   // CRUD Danh mục
@@ -189,7 +188,8 @@ class DBHelper {
 
   Future<SanPham?> getSanPhamById(int id) async {
     final db = await initDB();
-    final result = await db.query('sanpham', where: 'idsp = ?', whereArgs: [id]);
+    final result = await db.query(
+        'sanpham', where: 'idsp = ?', whereArgs: [id]);
     return result.isNotEmpty ? SanPham.fromMap(result.first) : null;
   }
 
@@ -208,7 +208,8 @@ class DBHelper {
     return await db.delete('sanpham', where: 'idsp = ?', whereArgs: [id]);
   }
 
-  Future<List<SanPham>> searchSanPhams({String? keyword, int? danhMucId}) async {
+  Future<List<SanPham>> searchSanPhams(
+      {String? keyword, int? danhMucId}) async {
     final db = await initDB();
     String whereClause = '';
     List<dynamic> whereArgs = [];
@@ -232,8 +233,6 @@ class DBHelper {
   }
 
 
-
-
   // Thêm người dùng mới
   static Future<int> insertUser(Map<String, dynamic> user) async {
     final db = await DBHelper.initDB();
@@ -251,6 +250,31 @@ class DBHelper {
     return result.isNotEmpty ? result.first : null;
   }
 
+  Future<Map<String, dynamic>?> getUserByName(String name) async {
+    final db = await initDB();
+    final result = await db.query(
+      'users',
+      where: 'hoten = ?',
+      whereArgs: [name],
+      limit: 1,
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+
+
+  //gán danh sách thông tin người dùng
+  Future<Map<String, dynamic>?> getUserById(int iduser) async {
+    final db = await initDB();
+    final result = await db.query(
+      'users',
+      where: 'id = ?',
+      whereArgs: [iduser],
+      limit: 1,
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
 
   // Trả về toàn bộ danh sách người dùng
   static Future<List<Map<String, dynamic>>> getAllUsers() async {
@@ -260,7 +284,8 @@ class DBHelper {
 
 
   //Xây dựng hàm kiểm tra đăng nhập
-  static Future<Map<String, dynamic>?> loginUser(String email, String password) async {
+  static Future<Map<String, dynamic>?> loginUser(String email,
+      String password) async {
     final db = await initDB();
     final result = await db.query(
       'users',
@@ -320,12 +345,6 @@ class DBHelper {
   }
 
 
-
-
-  // Future<List<Map<String, dynamic>>> getGioHang(int idUser) async {
-  //   final db = await initDB();
-  //   return await db.query('giohang', where: 'iduser = ?', whereArgs: [idUser]);
-  // }
   Future<List<Map<String, dynamic>>> getGioHang(int iduser) async {
     final db = await initDB();
     return await db.rawQuery('''
@@ -347,7 +366,7 @@ class DBHelper {
     await db.delete('giohang', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<int> clearGioHang() async {
+  Future<int> clearGioHang(int id) async {
     final db = await initDB();
     return await db.delete('giohang');
   }
@@ -359,21 +378,26 @@ class DBHelper {
     FROM giohang g
     JOIN sanpham s ON g.idsp = s.idsp
   ''');
-    return result.first['total'] == null ? 0 : (result.first['total'] as double);
+    return result.first['total'] == null ? 0 : (result
+        .first['total'] as double);
   }
 
 
 // ------------------- CRUD Đơn hàng -------------------
+
   Future<int> insertDonHang({
     required int iduser,
     required String diachi,
     required String sdt,
     required double tongtien,
     String? ghichu,
-    String? phuongthucthanhtoan = 'COD'
+    String phuongthucthanhtoan = 'COD',
+    required List<Map<String, dynamic>> gioHang,
   }) async {
     final db = await initDB();
-    return await db.insert('donhang', {
+
+    // Tạo đơn hàng
+    int iddh = await db.insert('donhang', {
       'iduser': iduser,
       'ngaydat': DateTime.now().toIso8601String(),
       'tongtien': tongtien,
@@ -381,24 +405,94 @@ class DBHelper {
       'diachi': diachi,
       'sdt': sdt,
       'ghichu': ghichu ?? '',
-    'phuongthucthanhtoan': phuongthucthanhtoan,
+      'phuongthucthanhtoan': phuongthucthanhtoan,
     });
+
+    // Thêm chi tiết từng sản phẩm trong giỏ
+    for (var item in gioHang) {
+      await db.insert('chitietdonhang', {
+        'iddh': iddh,
+        'idsp': item['idsp'],
+        'soluong': item['soluong'],
+        'gia': item['gia'],
+      });
+    }
+
+    return iddh; // trả về mã đơn hàng
   }
+
 
   Future<List<Map<String, dynamic>>> getAllDonHang() async {
     final db = await initDB();
     return await db.query('donhang', orderBy: 'ngaydat DESC');
   }
 
-  Future<int> updateTrangThaiDonHang(int iddh, String trangthai) async {
+  // Future<int> updateTrangThaiDonHang(int iddh, String trangthai) async {
+  //   final db = await initDB();
+  //   return await db.update('donhang', {'trangthai': trangthai}, where: 'iddh = ?', whereArgs: [iddh]);
+  // }
+  Future<int> updateTrangThaiDonHang(int iddh, String trangThai) async {
     final db = await initDB();
-    return await db.update('donhang', {'trangthai': trangthai}, where: 'iddh = ?', whereArgs: [iddh]);
+    return await db.update(
+      'donhang',
+      {'trangthai': trangThai},
+      where: 'iddh = ?',
+      whereArgs: [iddh],
+    );
   }
 
-  Future<int> deleteDonHang(int iddh) async {
+  Future<Map<String, dynamic>?> getDonHangById(int iddh) async {
     final db = await initDB();
-    return await db.delete('donhang', where: 'iddh = ?', whereArgs: [iddh]);
+    final result = await db.query(
+      'donhang',
+      where: 'iddh = ?',
+      whereArgs: [iddh],
+    );
+    return result.isNotEmpty ? result.first : null;
   }
+
+
+
+
+  Future<List<Map<String, dynamic>>> getLichSuDatTour(int idUser) async {
+    final db = await initDB();
+
+    // Lấy tất cả đơn hàng của người dùng kèm tổng tiền và trạng thái
+    final List<Map<String, dynamic>> orders = await db.query(
+      'donhang',
+      where: 'iduser = ?',
+      whereArgs: [idUser],
+      orderBy: 'ngaydat DESC',
+    );
+
+    // Với mỗi đơn hàng, lấy chi tiết sản phẩm từ chitietdonhang + sanpham
+    List<Map<String, dynamic>> lichSu = [];
+
+    for (var order in orders) {
+      final chitiet = await db.rawQuery('''
+      SELECT ct.idsp, ct.soluong, ct.gia, sp.tensp, sp.hinhanh
+      FROM chitietdonhang ct
+      JOIN sanpham sp ON ct.idsp = sp.idsp
+      WHERE ct.iddh = ?
+    ''', [order['iddh']]);
+
+      lichSu.add({
+        'iddh': order['iddh'],
+        'ngaydat': order['ngaydat'],
+        'tongtien': order['tongtien'],
+        'trangthai': order['trangthai'],
+        'diachi': order['diachi'],
+        'sdt': order['sdt'],
+        'ghichu': order['ghichu'],
+        'phuongthucthanhtoan': order['phuongthucthanhtoan'],
+        'chitiet': chitiet, // Danh sách sản phẩm trong đơn hàng
+      });
+    }
+
+    return lichSu;
+  }
+
+
 
 // ------------------- CRUD Chi tiết đơn hàng -------------------
   Future<int> insertChiTietDonHang({
@@ -425,6 +519,8 @@ class DBHelper {
     WHERE c.iddh = ?
   ''', [iddh]);
   }
+
+
 
 
 }

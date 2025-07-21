@@ -2,6 +2,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:shopbanhang/screens/admin/donhang.dart';
 import 'package:shopbanhang/screens/admin/list_user.dart';
 import 'package:shopbanhang/screens/admin/list_sp.dart';
 import 'package:shopbanhang/screens/admin/list_danhmuc.dart';
@@ -28,6 +29,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       const UserListScreen(),
       const ListSanPhamScreen(),
       const ListDanhMucScreen(),
+      const DonHangScreen(iduser: 1,),
       AdminAccountScreen(adminName: widget.adminName), // Trang tài khoản admin
     ];
   }
@@ -55,6 +57,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Người dùng'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'Sản phẩm'),
           BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Danh mục'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Đơn hàng'),
           BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Tài khoản'),
         ],
       ),

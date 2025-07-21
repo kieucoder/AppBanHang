@@ -90,6 +90,7 @@ class _ListDanhMucScreenState extends State<ListDanhMucScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quản lý danh mục'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
