@@ -7,11 +7,7 @@ version: 1.0.0+1
 environment:
   sdk: ^3.8.0
 
-  #dependencies:
-  #  sqllite: ^2.3.2
-  #  path: ^1.9.0
-  #  flutter:
-  #    sdk: flutter
+
 dependencies:
   intl: ^0.18.0
   image_picker: ^1.0.4  # chọn hình ảnh từ thiết bị
@@ -19,9 +15,13 @@ dependencies:
     sdk: flutter
   sqflite: ^2.3.2     # phiên bản mới nhất hiện tại
   path: ^1.9.0
+  http: ^1.2.0
 
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.8 #gói icons
   carousel_slider: ^4.2.1  # ✅ Gói trượt ảnh phải nằm ở đây
+
+  firebase_core: ^2.24.0 #gói gửi email
+  firebase_auth: ^4.14.0
 
 
 dev_dependencies:

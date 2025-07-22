@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -263,6 +266,7 @@ class DBHelper {
 
 
 
+
   //gán danh sách thông tin người dùng
   Future<Map<String, dynamic>?> getUserById(int iduser) async {
     final db = await initDB();
@@ -283,6 +287,58 @@ class DBHelper {
   }
 
 
+  // Future<String> resetPasswordLocal(String email) async {
+  //   final db = await initDB();
+  //   final user = await db.query('users', where: 'email = ?', whereArgs: [email]);
+  //
+  //   if (user.isEmpty) {
+  //     return 'Email không tồn tại trong hệ thống.';
+  //   }
+  //
+  //   // Random mật khẩu 6 số
+  //   String newPassword = (100000 + Random().nextInt(900000)).toString();
+  //
+  //   // Cập nhật mật khẩu mới
+  //   await db.update(
+  //     'users',
+  //     {'matkhau': newPassword},
+  //     where: 'email = ?',
+  //     whereArgs: [email],
+  //   );
+  //
+  //   return 'Mật khẩu mới của bạn là: $newPassword';
+  // }
+
+
+  Future<String> resetPasswordLocal(String email) async {
+    final db = await initDB();
+    final user = await db.query('users', where: 'email = ?', whereArgs: [email]);
+
+    if (user.isEmpty) {
+      return 'Email không tồn tại trong hệ thống.';
+    }
+
+    // Sinh mật khẩu mới ngẫu nhiên (6 số)
+    String newPassword = (100000 + Random().nextInt(900000)).toString();
+
+    // Cập nhật mật khẩu mới vào DB
+    await db.update(
+      'users',
+      {'matkhau': newPassword},
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    return 'Mật khẩu mới của bạn là: $newPassword';
+  }
+
+
+
+
+
+
+
+
   //Xây dựng hàm kiểm tra đăng nhập
   static Future<Map<String, dynamic>?> loginUser(String email,
       String password) async {
@@ -296,14 +352,20 @@ class DBHelper {
   }
 
 
-// Cập nhật User
-  static Future<int> updateUser(Map<String, dynamic> user) async {
+
+
+
+  static Future<int> updateUser({
+    required int id,
+    required Map<String, dynamic> userData,
+  }) async {
     final db = await initDB();
+    print("Cập nhật user ID: $id với data: $userData");
     return await db.update(
       'users',
-      user,
+      userData,
       where: 'id = ?',
-      whereArgs: [user['id']],
+      whereArgs: [id],
     );
   }
 

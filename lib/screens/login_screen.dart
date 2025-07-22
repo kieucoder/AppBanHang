@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopbanhang/screens/admin/homeadmin.dart';
+import 'package:shopbanhang/screens/quenmatkhau.dart';
 import 'package:shopbanhang/screens/register_screen.dart';
 import 'package:shopbanhang/database/db_helper.dart';
 import 'package:shopbanhang/screens/home_screens.dart';
@@ -169,11 +170,56 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
 
                 // Gợi ý đăng ký
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     const Text(
+                //       "Chưa có tài khoản?",
+                //       style: TextStyle(color: Colors.black87),
+                //     ),
+                //     TextButton(
+                //       onPressed: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (context) => const RegisterScreen(),
+                //           ),
+                //         );
+                //       },
+                //       child: const Text(
+                //         "Đăng ký",
+                //         style: TextStyle(
+                //           color: Color(0xFF3F51B5),
+                //           fontWeight: FontWeight.bold,
+                //         ),
+                //       ),
+                //     ),
+                //
+                //
+                //     TextButton(
+                //       onPressed: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (context) => const ForgotPasswordScreen(),
+                //           ),
+                //         );
+                //       },
+                //       child: const Text(
+                //         "Quên mật khẩu",
+                //
+                //       ),
+                //     ),
+                //
+                //
+                //   ],
+                // ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Chưa có tài khoản?",
+                      "Chưa có tài khoản? ",
                       style: TextStyle(color: Colors.black87),
                     ),
                     TextButton(
@@ -193,8 +239,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    const Text(
+                      "|",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Quên mật khẩu",
+                        style: TextStyle(
+                          color: Color(0xFF3F51B5),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
+
               ],
             ),
           ),

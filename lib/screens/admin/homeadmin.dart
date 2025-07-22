@@ -44,6 +44,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, //bỏ dấu mũi tên quay lại
         title: Text('Admin - ${widget.adminName}'),
         backgroundColor: Colors.orange,
       ),

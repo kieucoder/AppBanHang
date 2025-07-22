@@ -27,9 +27,8 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:shopbanhang/screens/admin/list_sp.dart';
-import 'package:shopbanhang/screens/admin/list_user.dart';
-import 'package:shopbanhang/screens/login_screen.dart';
+
+import 'package:shopbanhang/screens/quenmatkhau.dart';
 
 
 
@@ -46,7 +45,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Tiệm Sữa 4CE',
-      home: const UserListScreen(), // Màn hình checkout
+      home: const ForgotPasswordScreen(), // Màn hình checkout
     );
   }
 }
+
+
+

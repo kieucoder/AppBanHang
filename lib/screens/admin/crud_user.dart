@@ -27,14 +27,14 @@ class _UserFormScreenState extends State<UserFormScreen> {
     super.initState();
     if (widget.user != null) {
       print('Chỉnh sửa user: ${widget.user}');
-      _hotenController.text = widget.user!['hoten'];
-      _emailController.text = widget.user!['email'];
-      _matkhauController.text = widget.user!['matkhau'];
-      _confirmMatkhauController.text = widget.user!['matkhau'];
-      _role = widget.user!['role'];
-      _gioitinh = widget.user!['gioitinh'];
-      _diachiController.text = widget.user!['diachi'];
-      _ngaysinhController.text = widget.user!['ngaysinh'];
+      _hotenController.text = widget.user!['hoten']?.toString() ?? '';
+      _emailController.text = widget.user!['email']?.toString() ?? '';
+      _matkhauController.text = widget.user!['matkhau']?.toString() ?? '';
+      _confirmMatkhauController.text = widget.user!['matkhau']?.toString() ?? '';
+      _role = widget.user!['role']?.toString() ?? 'User';
+      _gioitinh = widget.user!['gioitinh']?.toString() ?? 'Nam';
+      _diachiController.text = widget.user!['diachi']?.toString() ?? '';
+      _ngaysinhController.text = widget.user!['ngaysinh']?.toString() ?? '';
     }
   }
 
@@ -43,28 +43,52 @@ class _UserFormScreenState extends State<UserFormScreen> {
     return regex.hasMatch(email);
   }
 
+  /// HÀM LƯU (THÊM MỚI HOẶC CẬP NHẬT)
   Future<void> _saveUser() async {
-    if (_formKey.currentState!.validate()) {
-      final user = {
-        'hoten': _hotenController.text,
-        'email': _emailController.text,
-        'matkhau': _matkhauController.text,
-        'role': _role,
-        'gioitinh': _gioitinh,
-        'diachi': _diachiController.text,
-        'ngaysinh': _ngaysinhController.text,
-      };
+    if (!_formKey.currentState!.validate()) return;
 
+    // Chuẩn bị dữ liệu user
+    final user = {
+      'hoten': _hotenController.text.trim(),
+      'email': _emailController.text.trim(),
+      'matkhau': _matkhauController.text.trim(),
+      'role': _role,
+      'gioitinh': _gioitinh,
+      'diachi': _diachiController.text.trim(),
+      'ngaysinh': _ngaysinhController.text.trim(),
+    };
+
+    try {
       if (widget.user == null) {
+        // ===== THÊM MỚI =====
         final id = await DBHelper.insertUser(user);
         print('Thêm user thành công với ID: $id');
+        Navigator.pop(context, true);
       } else {
-        user['id'] = widget.user!['id'];
-        final rows = await DBHelper.updateUser(user);
-        print('Cập nhật user ID ${user['id']} - Rows affected: $rows');
-      }
+        // ===== CẬP NHẬT =====
+        final dynamic rawId = widget.user!['id'];
+        final int id = (rawId is int) ? rawId : int.parse(rawId.toString());
 
-      Navigator.pop(context, true);
+        final rows = await DBHelper.updateUser(
+          id: id,
+          userData: user,
+        );
+
+        print('Updating user ID: $id - Rows affected: $rows');
+        if (rows > 0) {
+          Navigator.pop(context, true);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cập nhật thất bại!')),
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      print("Lỗi khi lưu user: $e");
+      print("Stacktrace: $stackTrace");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: $e')),
+      );
     }
   }
 
