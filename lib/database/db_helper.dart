@@ -15,17 +15,19 @@ class DBHelper {
     return join(dbPath, 'shopbanhang.db');
   }
 
+
+
+
   static Future<Database> initDB() async {
     final path = await getDBPath();
 
 
-    // final dbPath = await getDatabasesPath();
-    // await deleteDatabase(join(dbPath, 'shopbanhang.db'));
+
 
 
     return openDatabase(
       path,
-      version: 5,
+      version: 7, // Tăng version lên 6
       onCreate: (db, version) async {
         // Tạo bảng users
         await db.execute('''
@@ -51,7 +53,7 @@ class DBHelper {
         )
       ''');
 
-        // Tạo bảng sanpham
+        // Tạo bảng sanpham (có sẵn cột trangthai)
         await db.execute('''
         CREATE TABLE sanpham (
           idsp INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,21 +75,21 @@ class DBHelper {
         // Tạo bảng giohang
         await db.execute('''
         CREATE TABLE giohang (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  iduser INTEGER,
-  idsp INTEGER NOT NULL,
-  soluong INTEGER DEFAULT 1,
-  FOREIGN KEY (idsp) REFERENCES sanpham(idsp),
-  FOREIGN KEY (iduser) REFERENCES users(id)
-)
-
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          iduser INTEGER,
+          idsp INTEGER NOT NULL,
+          soluong INTEGER DEFAULT 1,
+          FOREIGN KEY (idsp) REFERENCES sanpham(idsp),
+          FOREIGN KEY (iduser) REFERENCES users(id)
+        )
       ''');
 
-        // Tạo bảng donhang (đã có phuongthucthanhtoan)
+        // Tạo bảng donhang (có cột tennguoidat và phuongthucthanhtoan)
         await db.execute('''
         CREATE TABLE donhang (
           iddh INTEGER PRIMARY KEY AUTOINCREMENT,
           iduser INTEGER,
+          tennguoidat TEXT,
           ngaydat TEXT,
           tongtien REAL,
           trangthai TEXT DEFAULT 'Chờ xác nhận',
@@ -111,37 +113,107 @@ class DBHelper {
           FOREIGN KEY (idsp) REFERENCES sanpham(idsp)
         )
       ''');
+
+
+        await db.execute('''
+       CREATE TABLE chatbox (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        sender TEXT,
+        message TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )
+    ''');
       },
 
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 5) {
-          // Kiểm tra cột phuongthucthanhtoan
-          final columns = await db.rawQuery("PRAGMA table_info(donhang)");
-          final hasColumn = columns.any((col) =>
-          col['name'] == 'phuongthucthanhtoan');
-
-          if (!hasColumn) {
-            await db.execute(
-                "ALTER TABLE donhang ADD COLUMN phuongthucthanhtoan TEXT DEFAULT 'COD'");
-            print("Đã thêm cột phuongthucthanhtoan vào donhang");
-          }
-
+        if (oldVersion < 7) {
           await db.execute('''
-          CREATE TABLE IF NOT EXISTS chitietdonhang (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            iddh INTEGER,
-            idsp INTEGER,
-            soluong INTEGER,
-            gia REAL,
-            FOREIGN KEY (iddh) REFERENCES donhang(iddh),
-            FOREIGN KEY (idsp) REFERENCES sanpham(idsp)
-          )
-        ''');
-          print("Database upgraded: chitietdonhang được tạo nếu chưa có");
+      CREATE TABLE IF NOT EXISTS chatbox (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        sender TEXT,
+        message TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )
+    ''');
+          print("Đã thêm bảng chatbox");
+        }
+
+        // Nếu bảng chatbox tồn tại nhưng thiếu cột thì thêm
+        final columns = await db.rawQuery("PRAGMA table_info(chatbox)");
+        final columnNames = columns.map((c) => c['name']).toList();
+        if (!columnNames.contains('user_id')) {
+          await db.execute('ALTER TABLE chatbox ADD COLUMN user_id INTEGER;');
+        }
+        if (!columnNames.contains('created_at')) {
+          await db.execute('ALTER TABLE chatbox ADD COLUMN created_at TEXT;');
         }
       },
+
+
+
+
     );
   }
+
+  Future<int> insertChatMessage({
+    required int userId,
+    required String sender,
+    required String message,
+  }) async {
+    final db = await initDB();
+
+    try {
+      return await db.insert('chatbox', {
+        'user_id': userId, // Đúng tên cột trong DB
+        'sender': sender,
+        'message': message,
+        'created_at': DateTime.now().toIso8601String(), // Đúng tên cột
+      });
+    } catch (e) {
+      print("Lỗi insert chat message: $e");
+      return -1; // trả về -1 nếu lỗi
+    }
+  }
+
+
+  // Lấy lịch sử chat của 1 user
+  Future<List<Map<String, dynamic>>> getChatMessages(int userId) async {
+    final db = await initDB();
+    return await db.query(
+      'chatbox',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'created_at ASC',
+    );
+  }
+
+
+  // lấy danh sách tất cả user chat vs admin
+  Future<List<Map<String, dynamic>>> getAllChatUsers() async {
+    final db = await initDB();
+    return await db.rawQuery('''
+    SELECT user_id, MAX(created_at) as last_message_time
+    FROM chatbox
+    GROUP BY user_id
+    ORDER BY last_message_time DESC
+  ''');
+  }
+
+
+
+
+// Xóa toàn bộ chat của 1 user
+  Future<int> clearChatMessages(int userId) async {
+    final db = await initDB();
+    return await db.delete('chatbox', where: 'user_id = ?', whereArgs: [userId]);
+  }
+
+// ========== PHẦN CRUD KHÁC (Danh mục, Sản phẩm, User, Đơn hàng) GIỮ NGUYÊN ==========
+// Bạn chỉ cần giữ nguyên các hàm CRUD của bạn ở phía dưới.
 
   static Future<void> checkColumns() async {
     final db = await initDB();
@@ -189,6 +261,8 @@ class DBHelper {
     return List.generate(maps.length, (i) => SanPham.fromMap(maps[i]));
   }
 
+
+
   Future<SanPham?> getSanPhamById(int id) async {
     final db = await initDB();
     final result = await db.query(
@@ -212,19 +286,25 @@ class DBHelper {
   }
 
   Future<List<SanPham>> searchSanPhams(
-      {String? keyword, int? danhMucId}) async {
+      {String? keyword, int? danhMucId, String? trangThai}) async {
     final db = await initDB();
     String whereClause = '';
     List<dynamic> whereArgs = [];
 
     if (keyword != null && keyword.isNotEmpty) {
-      whereClause += "tensp LIKE ?";
-      whereArgs.add('%$keyword%');
+      whereClause += "(tensp LIKE ? OR thuonghieu LIKE ? OR xuatxu LIKE ?)";
+      whereArgs.addAll(['%$keyword%', '%$keyword%', '%$keyword%']);
     }
     if (danhMucId != null) {
       if (whereClause.isNotEmpty) whereClause += " AND ";
       whereClause += "iddanhmuc = ?";
       whereArgs.add(danhMucId);
+    }
+
+    if(trangThai!= null){
+      if(whereClause.isNotEmpty) whereClause += " AND ";
+      whereClause += "trangthai = ?";
+      whereArgs.add(trangThai);
     }
 
     final result = await db.query(
@@ -286,28 +366,6 @@ class DBHelper {
     return await db.query('users');
   }
 
-
-  // Future<String> resetPasswordLocal(String email) async {
-  //   final db = await initDB();
-  //   final user = await db.query('users', where: 'email = ?', whereArgs: [email]);
-  //
-  //   if (user.isEmpty) {
-  //     return 'Email không tồn tại trong hệ thống.';
-  //   }
-  //
-  //   // Random mật khẩu 6 số
-  //   String newPassword = (100000 + Random().nextInt(900000)).toString();
-  //
-  //   // Cập nhật mật khẩu mới
-  //   await db.update(
-  //     'users',
-  //     {'matkhau': newPassword},
-  //     where: 'email = ?',
-  //     whereArgs: [email],
-  //   );
-  //
-  //   return 'Mật khẩu mới của bạn là: $newPassword';
-  // }
 
 
   Future<String> resetPasswordLocal(String email) async {
@@ -457,10 +515,11 @@ class DBHelper {
     required List<Map<String, dynamic>> gioHang,
   }) async {
     final db = await initDB();
+    final user = await getUserById(iduser);
 
-    // Tạo đơn hàng
     int iddh = await db.insert('donhang', {
       'iduser': iduser,
+      'tennguoidat': user?['hoten'] ?? 'Khách hàng',
       'ngaydat': DateTime.now().toIso8601String(),
       'tongtien': tongtien,
       'trangthai': 'Chờ xác nhận',
@@ -470,7 +529,6 @@ class DBHelper {
       'phuongthucthanhtoan': phuongthucthanhtoan,
     });
 
-    // Thêm chi tiết từng sản phẩm trong giỏ
     for (var item in gioHang) {
       await db.insert('chitietdonhang', {
         'iddh': iddh,
@@ -480,8 +538,9 @@ class DBHelper {
       });
     }
 
-    return iddh; // trả về mã đơn hàng
+    return iddh;
   }
+
 
 
   Future<List<Map<String, dynamic>>> getAllDonHang() async {
@@ -586,3 +645,8 @@ class DBHelper {
 
 
 }
+
+
+
+
+

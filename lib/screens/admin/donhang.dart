@@ -107,24 +107,29 @@ class _DonHangScreenState extends State<DonHangScreen> {
           final order = _donHangs[index];
           return Card(
             margin: const EdgeInsets.all(8),
-            child: ListTile(
+            child:
+            ListTile(
               title: Text('Mã đơn: ${order['iddh']}'),
               subtitle: Text(
-                'Ngày: ${formatNgay(order['ngaydat'])}\n'
+                'Khách hàng: ${order['tennguoidat'] ?? order['hoten'] ?? 'Không rõ'}\n'
+
+                    'Ngày đặt: ${formatNgay(order['ngaydat'])}\n'
                     'Tổng: ${_formatCurrency(order['tongtien'])}\n'
+                    'Thanh toán: ${order['phuongthucthanhtoan']}\n'
                     'Trạng thái: ${order['trangthai']}',
               ),
-              trailing:IconButton(
-                  onPressed: () => _changeStatus(order['iddh'],order['trangthai']),
-                   icon: Icon(Icons.edit,color: Colors.blue,)),
-
-
+              trailing: IconButton(
+                onPressed: () => _changeStatus(order['iddh'], order['trangthai']),
+                icon: const Icon(Icons.edit, color: Colors.blue),
+              ),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        ChiTietDonHangScreen(iddh: order['iddh']),
+                    builder: (_) => ChiTietDonHangScreen(
+                      iddh: order['iddh'],
+                      isAdmin: true, // admin có quyền chỉnh trạng thái
+                    ),
                   ),
                 );
               },
