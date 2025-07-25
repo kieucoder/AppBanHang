@@ -13,6 +13,7 @@ class ListDanhMucScreen extends StatefulWidget {
 
 class _ListDanhMucScreenState extends State<ListDanhMucScreen> {
   List<DanhMuc> _danhMucs = [];
+  // final TextEditingController _searchController = TextEditingController();
   final DBHelper _db = DBHelper();
 
   @override
@@ -27,6 +28,11 @@ class _ListDanhMucScreenState extends State<ListDanhMucScreen> {
       _danhMucs = data.map((e) => DanhMuc.fromMap(e)).toList();
     });
   }
+
+  // Future<void> _searchDanhMucs() async{
+  //   keyword: _searchController(),
+  // }
+
 
 
 
@@ -90,13 +96,10 @@ class _ListDanhMucScreenState extends State<ListDanhMucScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quản lý danh mục'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _addDanhMuc,
-          ),
-        ],
+
       ),
       body: _danhMucs.isEmpty
           ? const Center(child: Text('Chưa có danh mục'))
@@ -134,7 +137,29 @@ class _ListDanhMucScreenState extends State<ListDanhMucScreen> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final rs = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ThemDanhMucScreen()),
+          );
+          if (rs == true) {
+            _loadDanhMucs();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Thêm danh mục sản phẩm thành công')),
+            );
+          }
+        },
+        icon: const Icon(Icons.add),          // Icon bên trái
+        label: const Text('Thêm danh mục'),   // Label chữ
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
+      ),
+
+
+
     );
+
   }
 }
 

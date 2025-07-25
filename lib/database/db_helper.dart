@@ -188,11 +188,12 @@ class DBHelper {
       where: 'user_id = ?',
       whereArgs: [userId],
       orderBy: 'created_at ASC',
+
     );
   }
 
 
-  // lấy danh sách tất cả user chat vs admin
+  // lấy danh sách tất cả user chat vs admin desc sắp xếp theo moi
   Future<List<Map<String, dynamic>>> getAllChatUsers() async {
     final db = await initDB();
     return await db.rawQuery('''
@@ -200,6 +201,7 @@ class DBHelper {
     FROM chatbox
     GROUP BY user_id
     ORDER BY last_message_time DESC
+    
   ''');
   }
 
@@ -228,21 +230,72 @@ class DBHelper {
     return await db.insert('danhmuc', danhMuc.toMap());
   }
 
+  // Future<int> updateDanhMuc(DanhMuc danhMuc) async {
+  //   final db = await initDB();
+  //   return await db.update(
+  //     'danhmuc',
+  //     danhMuc.toMap(),
+  //     where: 'id = ?',
+  //     whereArgs: [danhMuc.id],
+  //   );
+  // }
+
   Future<int> updateDanhMuc(DanhMuc danhMuc) async {
     final db = await initDB();
-    return await db.update(
+
+    // 1. Lấy trạng thái hiện tại của danh mục trong DB
+    final oldData = await db.query(
+      'danhmuc',
+      where: 'id = ?',
+      whereArgs: [danhMuc.id],
+      limit: 1,
+    );
+
+    String? oldTrangThai = oldData.isNotEmpty ? oldData.first['trangthai'] as String? : null;
+
+    // 2. Cập nhật danh mục
+    final result = await db.update(
       'danhmuc',
       danhMuc.toMap(),
       where: 'id = ?',
       whereArgs: [danhMuc.id],
     );
+
+    // 3. Nếu trạng thái danh mục thay đổi, cập nhật sản phẩm trong danh mục
+    if (oldTrangThai != danhMuc.trangthai) {
+      // Chuyển trạng thái danh mục -> trạng thái sản phẩm
+      String trangThaiSanPham = (danhMuc.trangthai == 'Hiển thị') ? 'Hiện' : 'Ẩn';
+
+      await db.update(
+        'sanpham',
+        {'trangthai': trangThaiSanPham},
+        where: 'iddanhmuc = ?',
+        whereArgs: [danhMuc.id],
+      );
+    }
+
+    return result;
   }
 
 
-  Future<List<Map<String, dynamic>>> getDanhMucs() async {
+
+  // Future<List<Map<String, dynamic>>> getDanhMucs() async {
+  //   final db = await initDB();
+  //   return await db.query(
+  //       'danhmuc',
+  //
+  //   );
+  // }
+
+  Future<List<Map<String, dynamic>>> getDanhMucs({bool onlyVisible = false}) async {
     final db = await initDB();
-    return await db.query('danhmuc');
+    return await db.query(
+      'danhmuc',
+      where: onlyVisible ? 'trangthai = ?' : null,
+      whereArgs: onlyVisible ? ['Hiển thị'] : null,
+    );
   }
+
 
   Future<void> deleteDanhMuc(int id) async {
     final db = await initDB();
@@ -255,9 +308,19 @@ class DBHelper {
     return await db.insert('sanpham', sp.toMap());
   }
 
+  // Future<List<SanPham>> getAllSanPhams() async {
+  //   final db = await initDB();
+  //   final List<Map<String, dynamic>> maps = await db.query('sanpham');
+  //   return List.generate(maps.length, (i) => SanPham.fromMap(maps[i]));
+  // }
+
   Future<List<SanPham>> getAllSanPhams() async {
     final db = await initDB();
-    final List<Map<String, dynamic>> maps = await db.query('sanpham');
+    final maps = await db.query(
+      'sanpham',
+      where: 'trangthai = ?',
+      whereArgs: ['Hiện'],
+    );
     return List.generate(maps.length, (i) => SanPham.fromMap(maps[i]));
   }
 
@@ -394,6 +457,15 @@ class DBHelper {
 
 
 
+  Future<int> updateUserPassword(int userId, String newPassword) async {
+    final db = await initDB();
+    return await db.update(
+      'users',
+      {'matkhau': newPassword},
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+  }
 
 
 

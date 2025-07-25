@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shopbanhang/screens/sanphamtheodm.dart';
 import '../database/db_helper.dart';
 import 'chitietsp.dart';
-import 'giohang_screen.dart'; // Import trang giỏ hàng
 import '../models/product_model.dart'; // Import model SanPham
 import 'package:intl/intl.dart';
 
@@ -87,7 +86,7 @@ class _HomeTabState extends State<HomeTab> {
 
   // Lấy danh mục từ DB
   Future<void> loadDanhMucs() async {
-    final data = await DBHelper().getDanhMucs();
+    final data = await DBHelper().getDanhMucs(onlyVisible: true); //lấy những danh mục với trạng thái hiển thị
     setState(() {
       danhMucs = data;
     });
@@ -213,14 +212,7 @@ class _HomeTabState extends State<HomeTab> {
       itemBuilder: (context, index) {
         final product = flashSaleProducts[index];
 
-        // Tính giá khuyến mãi
-        // final double price = product.gia;
-        // final double originalPrice = (product.giamgia > 0)
-        //     ? price / (1 - product.giamgia / 100)
-        //     : price;
-        // final int discountPercent =
-        // (product.giamgia > 0) ? product.giamgia.round() : 0;
-        //
+
         final double price = product.gia;
         final int discountPercent = (product.giamgia > 0) ? product.giamgia.round() : 0;
         final double discountedPrice = (discountPercent > 0)

@@ -60,6 +60,8 @@ class SanPhamDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text('Số lượng: ${sanPham.soluong}', style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
+            Text('Trạng thái: ${sanPham.trangthai}'),
+            const SizedBox(height: 8,),
             Text('Danh mục ID: ${sanPham.iddanhmuc ?? "N/A"}',
                 style: const TextStyle(fontSize: 16)),
           ],

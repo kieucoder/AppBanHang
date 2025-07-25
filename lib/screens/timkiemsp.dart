@@ -32,7 +32,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
       return;
     }
     final db = DBHelper();
-    final results = await db.searchSanPhams(keyword: keyword);
+    final results = await db.searchSanPhams(keyword: keyword,trangThai: 'Hiện');
     setState(() {
       _searchResults = results;
     });

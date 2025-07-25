@@ -9,7 +9,7 @@ environment:
 
 
 dependencies:
-  intl: ^0.18.0
+  intl: ^0.18.0 #thư viện định dạng ngày giờ
   image_picker: ^1.0.4  # chọn hình ảnh từ thiết bị
   flutter:
     sdk: flutter

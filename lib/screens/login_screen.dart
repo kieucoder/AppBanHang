@@ -81,16 +81,21 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Logo
-                Image.asset(
-                  'assets/logo.jpg',
-                  height: 180,
+
+                ClipOval(
+                  child: Image.asset(
+                    'assets/logo.jpg',
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.cover, //Giúp hình ảnh đầy khung tròn
+                  ),
                 ),
                 const SizedBox(height: 16),
 
                 const Text(
                   'Đăng Nhập',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF21409A),
                   ),
@@ -162,65 +167,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: const Text(
                       'Đăng nhập',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 18),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
-                // Gợi ý đăng ký
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     const Text(
-                //       "Chưa có tài khoản?",
-                //       style: TextStyle(color: Colors.black87),
-                //     ),
-                //     TextButton(
-                //       onPressed: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //             builder: (context) => const RegisterScreen(),
-                //           ),
-                //         );
-                //       },
-                //       child: const Text(
-                //         "Đăng ký",
-                //         style: TextStyle(
-                //           color: Color(0xFF3F51B5),
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //     ),
-                //
-                //
-                //     TextButton(
-                //       onPressed: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //             builder: (context) => const ForgotPasswordScreen(),
-                //           ),
-                //         );
-                //       },
-                //       child: const Text(
-                //         "Quên mật khẩu",
-                //
-                //       ),
-                //     ),
-                //
-                //
-                //   ],
-                // ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
                       "Chưa có tài khoản? ",
-                      style: TextStyle(color: Colors.black87),
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18
+                      ),
+
                     ),
                     TextButton(
                       onPressed: () {
@@ -235,6 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         "Đăng ký",
                         style: TextStyle(
                           color: Color(0xFF3F51B5),
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -243,6 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       "|",
                       style: TextStyle(
                         color: Colors.grey,
+                        fontSize: 24,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -259,6 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         "Quên mật khẩu",
                         style: TextStyle(
                           color: Color(0xFF3F51B5),
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

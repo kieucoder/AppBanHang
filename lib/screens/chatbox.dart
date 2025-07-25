@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../database/db_helper.dart';
 
@@ -22,6 +21,31 @@ class _ChatBoxState extends State<ChatBox> {
   final ScrollController _scrollController = ScrollController();
   List<Map<String, dynamic>> _messages = [];
 
+
+
+  final List<Map<String,dynamic>> _responseMessage = [
+    {
+      'keywords': ['giá','bao nhiêu', 'cost', 'price'],
+      'response': 'Sản phẩm của chúng tôi có nhiều mức giá phù hợp, bạn vui lòng cho biết thêm thông tin sản phẩm'
+    },
+    {
+      'keywords': ['ship','giao hàng','vận chuyển','giao'],
+      'response': 'Shop chúng tôi hỗ trợ vận chuyển toàn quốc'
+    },
+    {
+      'keywords': ['mua', 'đặt hàng', 'order'],
+      'response': 'Bạn có thể đặt hàng qua COD hoặc liên hệ số 0899069754'
+    },
+    {
+      'keywords': ['hỗ trợ','contact','liên hệ'],
+      'response': 'Bạn cần hỗ trợ về điều gì cần tôi hỗ trợ vấn đề gì ?'
+    }
+
+
+  ];
+
+
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +57,15 @@ class _ChatBoxState extends State<ChatBox> {
     try {
       final data = await _db.getChatMessages(widget.userId);
       setState(() {
-        _messages = data;
+        // _messages = data;
+        // _messages = List<Map<String, dynamic>>.from(data);
+        setState(() {
+          _messages = List<Map<String, dynamic>>.from(data.map((m) => {
+            'sender': m['sender'],
+            'message': m['message'],
+            'created_at': m['created_at']
+          }));
+        });
       });
 
       // Cuộn xuống cuối
@@ -44,6 +76,25 @@ class _ChatBoxState extends State<ChatBox> {
       print("Lỗi load chat: $e");
     }
   }
+
+
+
+  //gọi danh sách các lệnh câu như ai
+  String _getAdminResponse(String userMessage) {
+    final message = userMessage.toLowerCase();
+
+    for (var pattern in _responseMessage) {
+      for (var keyword in pattern['keywords']) {
+        if (message.contains(keyword)) {
+          return pattern['response'];
+        }
+      }
+    }
+
+    return "Cảm ơn bạn đã liên hệ, chúng tôi sẽ phản hồi sớm!";
+  }
+
+
 
   /// Gửi tin nhắn
   Future<void> _sendMessage() async {
@@ -72,9 +123,29 @@ class _ChatBoxState extends State<ChatBox> {
       _scrollToBottom();
 
       // Nếu là user -> giả lập admin trả lời
+      // if (!widget.isAdminView) {
+      //   Future.delayed(const Duration(seconds: 1), () async {
+      //     final aiResponse = "Cảm ơn bạn! Chúng tôi sẽ liên hệ sớm.";
+      //     await _db.insertChatMessage(
+      //       userId: widget.userId,
+      //       sender: 'admin',
+      //       message: aiResponse,
+      //     );
+      //
+      //     setState(() {
+      //       _messages.add({
+      //         'sender': 'admin',
+      //         'message': aiResponse,
+      //         'created_at': DateTime.now().toIso8601String(),
+      //       });
+      //     });
+      //     _scrollToBottom();
+      //   });
+      // }
       if (!widget.isAdminView) {
         Future.delayed(const Duration(seconds: 1), () async {
-          final aiResponse = "Cảm ơn bạn! Chúng tôi sẽ liên hệ sớm.";
+          final aiResponse = _getAdminResponse(text);
+
           await _db.insertChatMessage(
             userId: widget.userId,
             sender: 'admin',
@@ -91,6 +162,7 @@ class _ChatBoxState extends State<ChatBox> {
           _scrollToBottom();
         });
       }
+
     } catch (e) {
       print("Lỗi gửi tin nhắn: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -111,7 +183,13 @@ class _ChatBoxState extends State<ChatBox> {
 
   /// Bubble tin nhắn
   Widget _buildMessageBubble(Map<String, dynamic> msg) {
-    final isUser = msg['sender'] == 'user';
+    // final isUser = msg['sender'] == 'user'; //tin nhắn làm cho người gửi admin nằm bên trái
+    bool isUser = false;
+    if(widget.isAdminView){
+      isUser = msg['seder'] == 'admin';
+    }else{
+      isUser = msg['sender'] == 'user';
+    }
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(

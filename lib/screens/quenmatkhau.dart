@@ -1,97 +1,3 @@
-// import 'package:flutter/material.dart';
-// import '../database/db_helper.dart';
-//
-// class ForgotPasswordScreen extends StatefulWidget {
-//   const ForgotPasswordScreen({super.key});
-//
-//   @override
-//   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
-// }
-//
-// class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-//   final TextEditingController emailController = TextEditingController();
-//   final _formKey = GlobalKey<FormState>();
-//   bool _isLoading = false;
-//
-//   Future<void> _handleForgotPassword() async {
-//     if (!_formKey.currentState!.validate()) return;
-//
-//     setState(() => _isLoading = true);
-//
-//     final email = emailController.text.trim();
-//     try {
-//       String message = await DBHelper().resetPasswordLocal(email);
-//       _showDialog(message);
-//     } catch (e) {
-//       _showDialog("Có lỗi xảy ra: $e");
-//     } finally {
-//       setState(() => _isLoading = false);
-//     }
-//   }
-//
-//   void _showDialog(String message) {
-//     showDialog(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         title: const Text('Thông báo'),
-//         content: Text(message),
-//         actions: [
-//           TextButton(
-//             onPressed: () => Navigator.pop(context),
-//             child: const Text('OK'),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.blue.shade50,
-//       body: Center(
-//         child: SingleChildScrollView(
-//           padding: const EdgeInsets.all(24),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               children: [
-//                 const Icon(Icons.lock_reset, size: 100, color: Colors.blue),
-//                 const SizedBox(height: 16),
-//                 const Text('Quên mật khẩu?',
-//                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: emailController,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Email',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   validator: (value) {
-//                     if (value == null || value.isEmpty) return 'Nhập email';
-//                     if (!value.contains('@')) return 'Email không hợp lệ';
-//                     return null;
-//                   },
-//                 ),
-//                 const SizedBox(height: 20),
-//                 ElevatedButton(
-//                   onPressed: _isLoading ? null : _handleForgotPassword,
-//                   child: _isLoading
-//                       ? const CircularProgressIndicator(color: Colors.white)
-//                       : const Text('Lấy mật khẩu mới'),
-//                 ),
-//                 TextButton(
-//                   onPressed: () => Navigator.pop(context),
-//                   child: const Text('Quay lại đăng nhập'),
-//                 )
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 
 import 'package:flutter/material.dart';
@@ -176,9 +82,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 children: [
                   const Icon(
                     Icons.lock_reset,
-                    size: 80,
+                    size: 100,
                     color: Color(0xFF21409A),
                   ),
+
+
                   const SizedBox(height: 16),
                   const Text(
                     'Quên mật khẩu?',

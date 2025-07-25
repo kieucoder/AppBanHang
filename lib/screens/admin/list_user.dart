@@ -39,10 +39,12 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-      AppBar(title: const Text('Quản lý Người dùng'),
-      centerTitle: true,),
-
+      appBar: AppBar(
+        title: const Text('Quản lý Người dùng'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
       body: _users.isEmpty
           ? const Center(child: Text('Không có người dùng nào'))
           : ListView.builder(
@@ -50,10 +52,29 @@ class _UserListScreenState extends State<UserListScreen> {
         itemBuilder: (context, index) {
           final user = _users[index];
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            margin:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            elevation: 2,
             child: ListTile(
-              title: Text(user['hoten']),
-              subtitle: Text('${user['email']} • Vai trò: ${user['role']}'),
+              title: Text(
+                user['hoten'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Mã: ${user['id']}'),
+                    Text('Email: ${user['email']}'),
+                    Text('Vai trò: ${user['role']}'),
+                  ],
+                ),
+              ),
+              isThreeLine: true,
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -69,7 +90,8 @@ class _UserListScreenState extends State<UserListScreen> {
                       if (result == true) {
                         _loadUsers();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Cập nhật thành công!')),
+                          const SnackBar(
+                              content: Text('Cập nhật thành công!')),
                         );
                       }
                     },
@@ -81,7 +103,8 @@ class _UserListScreenState extends State<UserListScreen> {
                         context: context,
                         builder: (ctx) => AlertDialog(
                           title: const Text('Xác nhận xóa'),
-                          content: Text('Bạn có chắc muốn xóa "${user['hoten']}"?'),
+                          content: Text(
+                              'Bạn có chắc muốn xóa "${user['hoten']}"?'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
@@ -90,10 +113,13 @@ class _UserListScreenState extends State<UserListScreen> {
                             TextButton(
                               onPressed: () async {
                                 Navigator.pop(ctx);
-                                await _deleteUser(user['id'], user['hoten']);
+                                await _deleteUser(
+                                    user['id'], user['hoten']);
                               },
-                              child: const Text('Xóa',
-                                  style: TextStyle(color: Colors.red)),
+                              child: const Text(
+                                'Xóa',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ),
                           ],
                         ),
@@ -106,7 +132,7 @@ class _UserListScreenState extends State<UserListScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -119,8 +145,12 @@ class _UserListScreenState extends State<UserListScreen> {
             );
           }
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Thêm người dùng'), // Label chữ
+        backgroundColor: Colors.blue,       // Màu nền (tuỳ chỉnh)
+        foregroundColor: Colors.white,      // Màu chữ/icon
       ),
+
     );
   }
 }
