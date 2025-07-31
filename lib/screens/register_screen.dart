@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shopbanhang/screens/login_screen.dart';
 import 'package:shopbanhang/database/db_helper.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: RegisterScreen(),
-  ));
-}
-
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -72,9 +65,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFE3F2FD),
       body: Center(
+        //SingleChildScrollView cho phép cuộn nội dung nếu dài
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
+          padding: const EdgeInsets.all(32),
+          child:SafeArea(child:
+           Column(
+            //căn giữa nội dung theo chiều dọc
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Hero(
@@ -145,20 +141,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                         const SizedBox(height: 15),
 
-                        const SizedBox(height: 8),
+
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Colors.black, width: 1.5),
+
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Giới tính",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              Row(
+                                children: [
+                                  Icon(Icons.transgender, color: Colors.black), // <-- icon giới tính
+                                  SizedBox(width: 2),
+                                  Text(
+                                    "Giới tính",
+                                    style: TextStyle( fontSize: 16),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 8),
                               Row(
@@ -200,7 +203,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ],
                           ),
                         ),
-
 
 
                         const SizedBox(height: 15),
@@ -274,6 +276,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ],
           ),
+          )
+
+
+
         ),
       ),
     );

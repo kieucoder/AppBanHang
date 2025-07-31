@@ -1,9 +1,7 @@
-import 'dart:convert';
+
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-
 import '../models/danhmuc.dart';
 import '../models/product_model.dart';
 import '../models/user.dart';
@@ -22,12 +20,9 @@ class DBHelper {
     final path = await getDBPath();
 
 
-
-
-
     return openDatabase(
       path,
-      version: 7, // Tăng version lên 6
+      version: 7,
       onCreate: (db, version) async {
         // Tạo bảng users
         await db.execute('''
@@ -214,8 +209,6 @@ class DBHelper {
     return await db.delete('chatbox', where: 'user_id = ?', whereArgs: [userId]);
   }
 
-// ========== PHẦN CRUD KHÁC (Danh mục, Sản phẩm, User, Đơn hàng) GIỮ NGUYÊN ==========
-// Bạn chỉ cần giữ nguyên các hàm CRUD của bạn ở phía dưới.
 
   static Future<void> checkColumns() async {
     final db = await initDB();
@@ -230,15 +223,6 @@ class DBHelper {
     return await db.insert('danhmuc', danhMuc.toMap());
   }
 
-  // Future<int> updateDanhMuc(DanhMuc danhMuc) async {
-  //   final db = await initDB();
-  //   return await db.update(
-  //     'danhmuc',
-  //     danhMuc.toMap(),
-  //     where: 'id = ?',
-  //     whereArgs: [danhMuc.id],
-  //   );
-  // }
 
   Future<int> updateDanhMuc(DanhMuc danhMuc) async {
     final db = await initDB();
@@ -279,14 +263,6 @@ class DBHelper {
 
 
 
-  // Future<List<Map<String, dynamic>>> getDanhMucs() async {
-  //   final db = await initDB();
-  //   return await db.query(
-  //       'danhmuc',
-  //
-  //   );
-  // }
-
   Future<List<Map<String, dynamic>>> getDanhMucs({bool onlyVisible = false}) async {
     final db = await initDB();
     return await db.query(
@@ -308,11 +284,7 @@ class DBHelper {
     return await db.insert('sanpham', sp.toMap());
   }
 
-  // Future<List<SanPham>> getAllSanPhams() async {
-  //   final db = await initDB();
-  //   final List<Map<String, dynamic>> maps = await db.query('sanpham');
-  //   return List.generate(maps.length, (i) => SanPham.fromMap(maps[i]));
-  // }
+
 
   Future<List<SanPham>> getAllSanPhams() async {
     final db = await initDB();
@@ -382,7 +354,7 @@ class DBHelper {
   // Thêm người dùng mới
   static Future<int> insertUser(Map<String, dynamic> user) async {
     final db = await DBHelper.initDB();
-    return await db.insert('users', user); // phải trùng tên bảng
+    return await db.insert('users', user);
   }
 
   // Kiểm tra email đã tồn tại chưa
@@ -469,7 +441,7 @@ class DBHelper {
 
 
 
-  //Xây dựng hàm kiểm tra đăng nhập
+  //hàm đăng nhập
   static Future<Map<String, dynamic>?> loginUser(String email,
       String password) async {
     final db = await initDB();
@@ -575,7 +547,7 @@ class DBHelper {
   }
 
 
-// ------------------- CRUD Đơn hàng -------------------
+  //CRUD ĐƠN HÀNG
 
   Future<int> insertDonHang({
     required int iduser,
@@ -620,10 +592,7 @@ class DBHelper {
     return await db.query('donhang', orderBy: 'ngaydat DESC');
   }
 
-  // Future<int> updateTrangThaiDonHang(int iddh, String trangthai) async {
-  //   final db = await initDB();
-  //   return await db.update('donhang', {'trangthai': trangthai}, where: 'iddh = ?', whereArgs: [iddh]);
-  // }
+
   Future<int> updateTrangThaiDonHang(int iddh, String trangThai) async {
     final db = await initDB();
     return await db.update(
@@ -687,7 +656,7 @@ class DBHelper {
 
 
 
-// ------------------- CRUD Chi tiết đơn hàng -------------------
+// CRUD Chi tiết đơn hàng
   Future<int> insertChiTietDonHang({
     required int iddh,
     required int idsp,
@@ -712,9 +681,6 @@ class DBHelper {
     WHERE c.iddh = ?
   ''', [iddh]);
   }
-
-
-
 
 }
 

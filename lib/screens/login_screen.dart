@@ -5,13 +5,6 @@ import 'package:shopbanhang/screens/register_screen.dart';
 import 'package:shopbanhang/database/db_helper.dart';
 import 'package:shopbanhang/screens/home_screens.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: LoginScreen(),
-  ));
-}
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -33,19 +26,16 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await DBHelper.loginUser(email, password);
 
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đăng nhập thành công!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Đăng nhập thành công!')));
 
-        // **Kiểm tra vai trò**
         if (user['role'] == 'Admin') {
           // Điều hướng tới Admin Home
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => AdminHomeScreen(
-                adminName: user['hoten'],
-              ),
+              builder: (context) => AdminHomeScreen(adminName: user['hoten']),
             ),
           );
         } else {
@@ -53,10 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomeScreen(
-                iduser: user['id'],
-                username: user['hoten'],
-              ),
+              builder: (context) =>
+                  HomeScreen(iduser: user['id'], username: user['hoten']),
             ),
           );
         }
@@ -81,13 +69,11 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Logo
-
-                ClipOval(
-                  child: Image.asset(
-                    'assets/logo.jpg',
-                    height: 200,
-                    width: 200,
-                    fit: BoxFit.cover, //Giúp hình ảnh đầy khung tròn
+                Hero(
+                  tag: 'logo',
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('assets/logo.jpg'),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -145,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return 'Vui lòng nhập mật khẩu';
                     }
                     if (value.length < 6) {
-                      return 'Mật khẩu phải trên 6 ký tự';
+                      return 'Mật khẩu phải 6 ký tự';
                     }
                     return null;
                   },
@@ -179,11 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     const Text(
                       "Chưa có tài khoản? ",
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18
-                      ),
-
+                      style: TextStyle(color: Colors.black87, fontSize: 18),
                     ),
                     TextButton(
                       onPressed: () {
@@ -231,7 +213,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),

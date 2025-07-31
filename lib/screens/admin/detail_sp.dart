@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shopbanhang/models/product_model.dart';
-
+import 'package:intl/intl.dart';
 class SanPhamDetailScreen extends StatelessWidget {
+
+  final NumberFormat _currencyFormatter = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
   final SanPham sanPham;
-  const SanPhamDetailScreen({super.key, required this.sanPham});
+   SanPhamDetailScreen({super.key, required this.sanPham});
+
+  String _formatCurrency(double price) {
+    final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+    return formatter.format(price);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +50,9 @@ class SanPhamDetailScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 8),
-            Text('Giá: ${sanPham.gia} VNĐ', style: const TextStyle(fontSize: 16)),
+            // Text('Giá: ${_formatCurrency(sanPham.gia.toString())}', style: const TextStyle(fontSize: 16)),
+            Text('Giá: ${_formatCurrency(sanPham!.gia)}', style: const TextStyle(fontSize: 16)),
+
             const SizedBox(height: 8),
             Text('Giảm giá: ${sanPham.giamgia} %', style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
