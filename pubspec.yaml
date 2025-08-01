@@ -28,11 +28,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1 #logo app
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/logo1.png
+    - assets/logo.jpg
     - assets/hipplogo.png
     - assets/logo-healthy-care.png
     - assets/logoabbott.png
@@ -46,4 +49,7 @@ flutter:
     - assets/glico0.jpg
     - assets/glico1.jpg
 
-
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo1.png" # Đường dẫn tới file logo của bạn

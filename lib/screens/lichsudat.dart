@@ -20,33 +20,6 @@ class _LichSuDatTourScreenState extends State<LichSuDatTourScreen> {
     _loadLichSu();
   }
 
-  // Future<void> _huyDonHang(int iddh) async {
-  //   final confirm = await showDialog<bool>(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Xác nhận hủy đơn'),
-  //       content: const Text('Bạn có chắc muốn hủy đơn hàng này không?'),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context, false),
-  //           child: const Text('Không'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context, true),
-  //           child: const Text('Có', style: TextStyle(color: Colors.red)),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //
-  //   if (confirm == true) {
-  //     await DBHelper().updateTrangThaiDonHang(iddh, 'Đã hủy');
-  //     await _loadLichSu();
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Đơn hàng đã được hủy!')),
-  //     );
-  //   }
-  // }
   Future<void> _huyDonHang(int iddh, String trangThai) async {
     if (trangThai != 'Chờ xác nhận') {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,23 +66,34 @@ class _LichSuDatTourScreenState extends State<LichSuDatTourScreen> {
   }
 
 
-  //hàm màu sắc dựa trên trạng thái đơn hàng
+
+
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Chờ xác nhận':
-        return Colors.orange; // Màu vàng cam
+        return Colors.orange.shade100;
+      case 'Đã xác nhận':
+        return Colors.orange.shade200;
+      case 'Đang xử lý':
+        return Colors.amber.shade100;
+      case 'Chờ thanh toán':
+        return Colors.yellow.shade200;
+      case 'Đã thanh toán':
+        return Colors.green.shade200;
       case 'Đang giao':
-        return Colors.blue; // Màu xanh dương
+        return Colors.blue.shade100;
       case 'Hoàn tất':
-        return Colors.green; // Màu xanh lá
+        return Colors.green.shade100;
+      case 'Đã hoàn tiền':
+        return Colors.purple.shade200;
+      case 'Không thành công':
+        return Colors.black12;
       case 'Đã hủy':
-        return Colors.red; // Màu đỏ
+        return Colors.red.shade100;
       default:
-        return Colors.grey; // Mặc định
+        return Colors.grey.shade200;
     }
   }
-
-
 
   String _formatNgay(String ngay) {
     try {
@@ -173,17 +157,15 @@ class _LichSuDatTourScreenState extends State<LichSuDatTourScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Text(
-                      'Trạng thái: ${order['trangthai']}',
-                      style: TextStyle(
-                        color: order['trangthai'] == 'Đã hủy'
-                            ? Colors.red
-                            : order['trangthai'] == 'Chờ xác nhận'
-                            ? Colors.orange
-                            : Colors.green,
-                        fontWeight: FontWeight.w600,
+                    Chip(
+                      label: Text(
+                        order['trangthai'],
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ),
+                      backgroundColor: _getStatusColor(order['trangthai']),
+                    )
+
+
                   ],
                 ),
               ),

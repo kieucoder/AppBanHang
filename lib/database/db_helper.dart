@@ -585,13 +585,21 @@ class DBHelper {
     return iddh;
   }
 
-
-
-  Future<List<Map<String, dynamic>>> getAllDonHang() async {
+  Future<List<Map<String, dynamic>>> getDonHangsFiltered(String status, String keyword) async {
     final db = await initDB();
-    return await db.query('donhang', orderBy: 'ngaydat DESC');
-  }
+    String query = '''
+    SELECT * FROM donhang
+    WHERE (tennguoidat LIKE ? OR CAST(iddh AS TEXT) LIKE ?)
+  ''';
+    List<dynamic> args = ['%$keyword%', '%$keyword%'];
 
+    if (status != 'Tất cả') {
+      query += ' AND trangthai = ?';
+      args.add(status);
+    }
+    query += 'ORDER BY iddh DESC';
+    return await db.rawQuery(query, args);
+  }
 
   Future<int> updateTrangThaiDonHang(int iddh, String trangThai) async {
     final db = await initDB();
@@ -602,6 +610,15 @@ class DBHelper {
       whereArgs: [iddh],
     );
   }
+
+
+
+
+  Future<List<Map<String, dynamic>>> getAllDonHang() async {
+    final db = await initDB();
+    return await db.query('donhang', orderBy: 'ngaydat DESC');
+  }
+
 
   Future<Map<String, dynamic>?> getDonHangById(int iddh) async {
     final db = await initDB();

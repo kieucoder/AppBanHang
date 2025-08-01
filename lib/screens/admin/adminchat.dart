@@ -33,15 +33,6 @@ class _ChatBoxState extends State<ChatBox> {
     try {
       final data = await _db.getChatMessages(widget.userId);
       setState(() {
-        // _messages = data;
-        // setState(() {
-        //   _messages = List<Map<String, dynamic>>.from(_messages)
-        //     ..add({
-        //       'sender': sender,
-        //       'message': text,
-        //       'created_at': DateTime.now().toIso8601String(),
-        //     });
-        // });
         setState(() {
           _messages = List<Map<String, dynamic>>.from(data.map((m) => {
             'sender': m['sender'],

@@ -92,7 +92,6 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             const SizedBox(height: 24),
-
             // Thông tin chi tiết
             _buildInfoCard("Họ tên", user!.hoten),
             _buildInfoCard("Giới tính", user!.gioitinh),
@@ -145,6 +144,5 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 }
-
 
 

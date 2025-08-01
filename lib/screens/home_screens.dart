@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopbanhang/screens/chatbox.dart';
-import 'package:shopbanhang/screens/lichsudattour.dart';
+import 'package:shopbanhang/screens/lichsudat.dart';
 import 'package:shopbanhang/screens/account.dart';
 import 'package:shopbanhang/screens/giohang_screen.dart';
 import 'package:shopbanhang/screens/hometab.dart';

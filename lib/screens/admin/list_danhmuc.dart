@@ -29,12 +29,6 @@ class _ListDanhMucScreenState extends State<ListDanhMucScreen> {
     });
   }
 
-  // Future<void> _searchDanhMucs() async{
-  //   keyword: _searchController(),
-  // }
-
-
-
 
   Future<void> _deleteDanhMuc(int id) async {
     final danhMuc = _danhMucs.firstWhere((dm) => dm.id == id);

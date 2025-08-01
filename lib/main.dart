@@ -1,9 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:shopbanhang/screens/login_screen.dart';
-
-
-
 
 
 void main() async {

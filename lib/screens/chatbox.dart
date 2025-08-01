@@ -29,7 +29,7 @@ class _ChatBoxState extends State<ChatBox> {
       'response': 'Sản phẩm của chúng tôi có nhiều mức giá phù hợp, bạn vui lòng cho biết thêm thông tin sản phẩm'
     },
     {
-      'keywords': ['ship','giao hàng','vận chuyển','giao'],
+      'keywords': ['ship','giao hàng','vận chuyển','giao','delivery'],
       'response': 'Shop chúng tôi hỗ trợ vận chuyển toàn quốc'
     },
     {
